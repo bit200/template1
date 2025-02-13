@@ -1,0 +1,8 @@
+Dockerfile
+package-lock.json
+docker-compose.yml
+docker-compose.log
+.env
+.git
+.syncignore
+node_modules
