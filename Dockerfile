@@ -1,12 +1,12 @@
-# Use a Node.js base image
-FROM node:18-alpine 
+FROM node:18-alpine
 
-# Set the working directory inside the container
 WORKDIR /app
+
+# Install screen
+RUN npm install -g pm2
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
-
+CMD ["sh", "-lc", "pm2 start npm -- start && pm2 logs"]
