@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  react-app:
+    build: .
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - /app/node_modules/
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # Helps with detecting file changes
+      - WDS_SOCKET_PORT=3003  # Fix WebSocket port for hot reload
+      - HOST=0.0.0.0  # Ensure React binds to the correct host
