@@ -2,6 +2,7 @@ services:
   main:
     image: t1
     container_name: ${SESSION_ID}-main
+    working_dir: /app
     ports:
       - "${PORT}:3000"
     environment:
@@ -11,11 +12,14 @@ services:
     volumes:
       - ${SRC_PATH}:/app
       - node_modules:/app/node_modules:ro
+      - ${PWD}/package.json:/app/package.json:ro
+      - /rdata/entrypoint/sessionLogs:/var/log
       - /rdata/.cache/session-${SESSION_ID}:/app/node_modules/.cache:rw
+      - /rdata/.cache/session-${SESSION_ID}/.vite:/app/node_modules/.vite:rw
       - ${PWD}/start_cmd.sh:/app/start_cmd.sh:ro
       - /rdata/entrypoint/ssh_entrypoint.sh:/ssh_entrypoint.sh:ro
       - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs     
-    command: ["sh", "-c", "echo 'Hello'; ls -la; sh /ssh_entrypoint.sh; sh /app/start_cmd.sh"]
+    command: ["sh", "-c", "sh /ssh_entrypoint.sh; sh /app/start_cmd.sh"]
     # command: ["sh", "/app/start_cmd.sh"]
     stdin_open: true  
     tty: true
