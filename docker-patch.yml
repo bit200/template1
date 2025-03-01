@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  main:
+    working_dir: /app
+    container_name: ${SESSION_ID}-main
+    volumes:
+      - /rdata/entrypoint/sessionLogs:/var/log
+      - /rdata/.cache/session-${SESSION_ID}:/app/node_modules/.cache:rw
+      - /rdata/.cache/session-${SESSION_ID}/.vite:/app/node_modules/.vite:rw
+      - ${PWD}/cmds:/app/cmds:ro
+      - ${PWD}/start_cmd.sh:/app/start_cmd.sh:ro
+      - /rdata/entrypoint/ssh_entrypoint.sh:/ssh_entrypoint.sh:ro
+      - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs         
+    environment:
+    networks:
+      - my-network
+    stdin_open: true  
+    tty: true
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:1030"
+        gelf-compression-type: "none"
+
+
+  vscode:
+    image: vscode
+    container_name: ${SESSION_ID}-vscode
+    restart: unless-stopped
+    ports:
+      - "${VS_PORT}:3000"
+    environment:
+      - CONNECTION_TOKEN={VS_TOKEN:-t}
+    volumes:
+      - ${SRC_PATH}:/app/itk-academy
+      - ${SESS_PATH}/local_tests:/app/itk-academy/__test__
+      - ${LOG_MAIN_DIR}/${SESSION_ID}-main:/app/logs/main:ro 
+      - ${LOG_MAIN_DIR}/${SESSION_ID}-vscode:/app/logs/vs:ro 
+      - ${LOG_MAIN_DIR}//${SESSION_ID}-unit-tests:/app/logs/test:ro 
+      - /rdata/entrypoint/empty.txt:/app/.openvscode-server/node_modules/vsda/rust/web/vsda_bg.wasm 
+      - /rdata/entrypoint/empty.txt:/app/.openvscode-server/node_modules/vsda/rust/web/vsda.js 
+      - /rdata/entrypoint/custom_settings.json:/root/.openvscode-server/data/Machine/settings.json 
+      - /rdata/installed_extensions:/root/.openvscode-server/extensions 
+      - /rdata/potential_extensions:/root/potential_extensions 
+      - ${task_path}/files:/root/.openvscode-server/extensions/itkacademydevgroup.itk-0.3.3/files
+    networks:
+      - my-network
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:1030"
+        gelf-compression-type: "none"
+networks:
+  my-network:
+    driver: bridge

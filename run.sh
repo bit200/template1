@@ -1,5 +1,5 @@
 docker rm -f $(docker ps -a -q);
-docker compose --project-name sess14-project -f docker-compose.yml --env-file .env.sess14 up -d;
+docker compose --project-name sess14-project -f docker-compose.yml -f docker-patch.yml --env-file .env.sess14 up -d;
 # docker compose --project-name sess15-project -f docker-compose.yml --env-file .env.sess15 up -d
 
 
