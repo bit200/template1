@@ -1,0 +1,1 @@
+rm -rf __test__; cp -R /root/tst/local_tests __test__;npm run test > /var/log/local-unit.log

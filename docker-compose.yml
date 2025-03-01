@@ -16,7 +16,10 @@ services:
       - /rdata/entrypoint/sessionLogs:/var/log
       - /rdata/.cache/session-${SESSION_ID}:/app/node_modules/.cache:rw
       - /rdata/.cache/session-${SESSION_ID}/.vite:/app/node_modules/.vite:rw
+      - ${PWD}/cmds:/app/cmds:ro
       - ${PWD}/start_cmd.sh:/app/start_cmd.sh:ro
+      - ${PWD}/full_tests:/root/tst/full_tests:ro
+      - ${PWD}/local_tests:/root/tst/local_tests:ro
       - /rdata/entrypoint/ssh_entrypoint.sh:/ssh_entrypoint.sh:ro
       - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs     
     command: ["sh", "-c", "sh /ssh_entrypoint.sh; sh /app/start_cmd.sh"]
