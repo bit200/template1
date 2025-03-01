@@ -15,7 +15,7 @@ services:
       - ${PWD}/entrypoint.sh:/app/entrypoint.sh
       - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs
     command: ["sh", "/app/entrypoint.sh"]
-    stdin_open: true  # Keep container open for interaction
+    stdin_open: true  
     tty: true
     networks:
       - my-network
