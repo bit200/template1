@@ -12,9 +12,11 @@ services:
       - ${SRC_PATH}:/app
       - node_modules:/app/node_modules:ro
       - /rdata/.cache/session-${SESSION_ID}:/app/node_modules/.cache:rw
-      - ${PWD}/entrypoint.sh:/app/entrypoint.sh
-      - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs
-    command: ["sh", "/app/entrypoint.sh"]
+      - ${PWD}/start_cmd.sh:/app/start_cmd.sh:ro
+      - /rdata/entrypoint/ssh_entrypoint.sh:/ssh_entrypoint.sh:ro
+      - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs     
+    command: ["sh", "-c", "echo 'Hello'; ls -la; sh /ssh_entrypoint.sh; sh /app/start_cmd.sh"]
+    # command: ["sh", "/app/start_cmd.sh"]
     stdin_open: true  
     tty: true
     networks:
@@ -35,6 +37,15 @@ services:
       - CONNECTION_TOKEN=t
     volumes:
       - ${SRC_PATH}:/app/itk-academy
+      - ${LOG_MAIN_DIR}/${SESSION_ID}-main:/app/logs/main:ro 
+      - ${LOG_MAIN_DIR}/${SESSION_ID}-vscode:/app/logs/vs:ro 
+      - ${LOG_MAIN_DIR}//${SESSION_ID}-unit-tests:/app/logs/test:ro 
+      - /rdata/entrypoint/empty.txt:/app/.openvscode-server/node_modules/vsda/rust/web/vsda_bg.wasm 
+      - /rdata/entrypoint/empty.txt:/app/.openvscode-server/node_modules/vsda/rust/web/vsda.js 
+      - /rdata/entrypoint/custom_settings.json:/root/.openvscode-server/data/Machine/settings.json 
+      - /rdata/installed_extensions:/root/.openvscode-server/extensions 
+      - /rdata/potential_extensions:/root/potential_extensions 
+      - ${task_path}/files:/root/.openvscode-server/extensions/itkacademydevgroup.itk-0.3.3/files
     networks:
       - my-network
     logging:
