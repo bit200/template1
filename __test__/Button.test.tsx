@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import Button from "./Button";
+import Button from "../src/Button.tsx";
 import { vi } from "vitest"; // ✅ Import vi
 
 test("renders button with label", () => {

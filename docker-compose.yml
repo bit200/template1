@@ -1,0 +1,50 @@
+services:
+  main:
+    image: t1
+    container_name: ${SESSION_ID}-main
+    ports:
+      - "${PORT}:3000"
+    environment:
+      - HOST=0.0.0.0
+      - WDS_SOCKET_HOST=0.0.0.0
+      - WDS_SOCKET_PORT=3002      
+    volumes:
+      - ${SRC_PATH}:/app
+      - node_modules:/app/node_modules:ro
+      - /rdata/.cache/session-${SESSION_ID}:/app/node_modules/.cache:rw
+      - ${PWD}/entrypoint.sh:/app/entrypoint.sh
+      - /rdata/logs/containers/${SESSION_ID}-unit-tests:/unit-logs
+    command: ["sh", "/app/entrypoint.sh"]
+    stdin_open: true  # Keep container open for interaction
+    tty: true
+    networks:
+      - my-network
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:1030"
+        gelf-compression-type: "none"
+
+  vscode:
+    image: vscode
+    container_name: ${SESSION_ID}-vscode
+    restart: unless-stopped
+    ports:
+      - "${VS_PORT}:3000"
+    environment:
+      - CONNECTION_TOKEN=t
+    volumes:
+      - ${SRC_PATH}:/app/itk-academy
+    networks:
+      - my-network
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:1030"
+        gelf-compression-type: "none"
+volumes:
+  node_modules:
+  cache:
+networks:
+  my-network:
+    driver: bridge
